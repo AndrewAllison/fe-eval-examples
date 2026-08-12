@@ -1,0 +1,92 @@
+name: Quality and evidence
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/aisdlc
+  BETTER_AUTH_SECRET: ${{ github.sha }}
+  BETTER_AUTH_URL: https://localhost:3000
+  LOG_LEVEL: info
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.4-alpine
+        env:
+          POSTGRES_DB: aisdlc
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d aisdlc"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:migrate
+      - run: pnpm verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unit-coverage
+          path: coverage
+          if-no-files-found: error
+
+  browser-evidence:
+    needs: quality
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.4-alpine
+        env:
+          POSTGRES_DB: aisdlc
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d aisdlc"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec agent-browser install --with-deps
+      - run: pnpm db:migrate
+      - run: pnpm dev > /tmp/frontend-aisdlc-next.log 2>&1 &
+      - run: curl --fail --insecure --retry 30 --retry-delay 2 https://localhost:3000/api/health
+      - run: pnpm evidence:capture
+        env:
+          EVIDENCE_RUN_ID: pr-${{ github.event.pull_request.number || github.run_number }}-${{ github.run_attempt }}
+          EVIDENCE_PASSWORD: ${{ github.sha }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: browser-evidence
+          path: evidence/runs
+          if-no-files-found: error
+          retention-days: 30

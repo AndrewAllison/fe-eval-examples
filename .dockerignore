@@ -1,0 +1,8 @@
+.git
+.github
+.next
+.env*
+coverage
+evidence/runs
+node_modules
+*.log

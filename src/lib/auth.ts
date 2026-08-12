@@ -1,0 +1,19 @@
+import { drizzleAdapter } from "@better-auth/drizzle-adapter";
+import { betterAuth } from "better-auth";
+
+import { readServerEnvironment } from "@/config/env";
+import { db } from "@/db/client";
+import * as schema from "@/db/schema";
+
+const environment = readServerEnvironment();
+
+export const auth = betterAuth({
+  appName: "Frontend AISDLC Reference",
+  baseURL: environment.BETTER_AUTH_URL,
+  secret: environment.BETTER_AUTH_SECRET,
+  database: drizzleAdapter(db, { provider: "pg", schema }),
+  emailAndPassword: {
+    enabled: true,
+    minPasswordLength: 12,
+  },
+});
