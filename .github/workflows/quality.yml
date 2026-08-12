@@ -76,6 +76,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec agent-browser install --with-deps
+      - name: Install video recorder
+        run: sudo apt-get update && sudo apt-get install --yes ffmpeg
       - run: pnpm db:migrate
       - name: Capture browser evidence
         run: |
