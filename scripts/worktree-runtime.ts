@@ -42,7 +42,7 @@ execFileSync("pnpm", ["db:migrate"], {
   stdio: "inherit",
 });
 
-const result = spawnSync("pnpm", ["dev", "--", "--port", String(config.appPort)], {
+const result = spawnSync("pnpm", ["dev", "--port", String(config.appPort)], {
   cwd: root,
   env: runtimeEnvironment,
   stdio: "inherit",
