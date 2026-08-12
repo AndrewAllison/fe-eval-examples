@@ -6,8 +6,10 @@
   "scripts": {
     "build": "next build",
     "db:check": "drizzle-kit check",
+    "db:down": "POSTGRES_PORT=5432 docker compose down",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:up": "POSTGRES_PORT=5432 docker compose up -d --wait database",
     "db:studio": "drizzle-kit studio",
     "dev": "next dev --experimental-https",
     "dev:http": "next dev",
@@ -22,6 +24,9 @@
     "test:watch": "vitest",
     "typecheck": "next typegen && tsc --noEmit",
     "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm guardrails && pnpm static && pnpm test && pnpm db:check && pnpm build",
+    "worktree:create": "node scripts/create-worktree.ts",
+    "worktree:dev": "node scripts/worktree-runtime.ts dev",
+    "worktree:down": "node scripts/worktree-runtime.ts down",
     "start": "next start"
   },
   "dependencies": {

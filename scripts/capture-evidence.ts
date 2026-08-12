@@ -33,7 +33,7 @@ if (!password || password.length < 12) {
   throw new Error("EVIDENCE_PASSWORD must contain at least 12 characters.");
 }
 
-const baseUrl = "https://localhost:3000";
+const baseUrl = z.url().parse(process.env.BETTER_AUTH_URL);
 const email = `evidence+${runId}@example.test`;
 const runsDirectory = resolve("evidence", "runs");
 const outputDirectory = resolve(runsDirectory, runId);

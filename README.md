@@ -17,7 +17,7 @@ pnpm install --frozen-lockfile
 # Export GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_WORKSPACE_DOMAIN
 # from your secret manager before running this command.
 pnpm env:setup
-docker compose up -d --wait database
+pnpm db:up
 pnpm db:migrate
 pnpm dev
 ```
@@ -53,4 +53,20 @@ pnpm db:generate
 pnpm db:migrate
 ```
 
-Use `docker compose down` to stop PostgreSQL. The named volume retains local data.
+Use `pnpm db:down` to stop PostgreSQL. The named volume retains local data.
+
+## Work in an isolated worktree
+
+From a clean `main` worktree, create a named sibling worktree:
+
+```bash
+pnpm worktree:create -- my-task
+cd ../fe-eval-examples-my-task
+pnpm worktree:dev
+```
+
+The creation command branches from the current local `main`, copies the ignored local authentication environment without displaying it, installs locked dependencies, and assigns deterministic application and PostgreSQL ports. Docker resources and database data are scoped to the worktree. The command fails if either assigned port is already in use.
+
+Use `pnpm worktree:down` inside the generated worktree to stop its PostgreSQL container. Its named volume retains the isolated database data.
+
+Credential authentication works on every generated port. To use Google authentication, add the generated application origin and callback URL to the Google OAuth client.

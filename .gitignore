@@ -37,6 +37,7 @@ yarn-error.log*
 # local TLS and generated evidence
 /certificates/
 /evidence/runs/
+/.worktree.json
 
 # vercel
 .vercel
