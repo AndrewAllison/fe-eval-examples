@@ -29,7 +29,7 @@ export function WorkspaceSignIn({ oauthError }: WorkspaceSignInProps) {
   }, []);
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-3">
       {error ? (
         <p
           className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
@@ -65,7 +65,7 @@ export function WorkspaceSignIn({ oauthError }: WorkspaceSignInProps) {
         {pending ? "Connecting…" : "Continue with Google"}
       </Button>
       <p className="text-center text-xs leading-5 text-white/45">
-        Access is restricted to the configured Google Workspace organisation.
+        Google access requires the configured Workspace organisation.
       </p>
     </div>
   );

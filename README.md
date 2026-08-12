@@ -34,13 +34,13 @@ This runs formatting, type-aware linting, TypeScript, dependency guardrails, dea
 
 ## Capture browser evidence
 
-Start the application and provide a unique run identifier:
+Start the application and provide a unique run identifier plus a disposable test password:
 
 ```bash
-EVIDENCE_RUN_ID=local-001 pnpm evidence:capture
+EVIDENCE_RUN_ID=local-001 EVIDENCE_PASSWORD='test-only-password' pnpm evidence:capture
 ```
 
-The ignored `evidence/runs/<run-id>` directory contains screenshots, accessibility snapshots, a sanitized Google authorization record, browser diagnostics, and a checksum manifest. Completing the employee-owned Google callback is a manual acceptance check and is never recorded by automation.
+The ignored `evidence/runs/<run-id>` directory contains videos and screenshots of credential registration, sign-out, and sign-in; accessibility snapshots; a sanitized Google authorization record; browser diagnostics; and a checksum manifest. The disposable password is never written to the evidence pack. Completing the employee-owned Google callback is a manual acceptance check and is never recorded by CI.
 
 Configure the Google OAuth client with `https://localhost:3000` as an authorized JavaScript origin and `https://localhost:3000/api/auth/callback/google` as an authorized redirect URI. Set the app audience to **Internal** in a Google Cloud project owned by the Workspace organisation.
 

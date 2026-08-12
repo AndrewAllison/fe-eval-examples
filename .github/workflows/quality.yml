@@ -86,6 +86,7 @@ jobs:
       - run: pnpm evidence:capture
         env:
           EVIDENCE_RUN_ID: pr-${{ github.event.pull_request.number || github.run_number }}-${{ github.run_attempt }}
+          EVIDENCE_PASSWORD: ${{ github.sha }}
       - uses: actions/upload-artifact@v4
         with:
           name: browser-evidence

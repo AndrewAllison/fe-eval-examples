@@ -1,15 +1,28 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import React, { type ReactNode } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface AuthShellProps {
+interface AuthShellBaseProps {
   children: ReactNode;
   description: string;
   title: string;
 }
 
-export function AuthShell({ children, description, title }: AuthShellProps) {
+type AuthShellProps = AuthShellBaseProps &
+  (
+    | { alternateHref: "/sign-in" | "/sign-up"; alternateLabel: string }
+    | { alternateHref?: never; alternateLabel?: never }
+  );
+
+export function AuthShell({
+  children,
+  description,
+  alternateHref,
+  alternateLabel,
+  title,
+}: AuthShellProps) {
   return (
     <main className="auth-grid grid min-h-screen place-items-center bg-[#07110e] px-5 py-12 text-white">
       <div className="w-full max-w-md">
@@ -26,6 +39,15 @@ export function AuthShell({ children, description, title }: AuthShellProps) {
           </CardHeader>
           <CardContent className="pt-5">{children}</CardContent>
         </Card>
+        {alternateHref && alternateLabel ? (
+          <Link
+            className="mt-6 flex items-center justify-center gap-2 text-sm text-white/55 transition-colors hover:text-white"
+            href={alternateHref}
+          >
+            {alternateLabel}
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        ) : null}
       </div>
     </main>
   );

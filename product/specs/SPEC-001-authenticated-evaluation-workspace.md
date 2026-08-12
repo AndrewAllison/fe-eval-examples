@@ -4,15 +4,15 @@ Source idea: `IDEA-001`
 
 ## Scope
 
-Deliver a responsive Next.js reference application with organisation-restricted Google Workspace sign-in, a protected dashboard, sign-out, PostgreSQL persistence, and an evidence-producing verification workflow.
+Deliver a responsive Next.js reference application with organisation-restricted Google Workspace authentication, deterministic credential authentication, a protected dashboard, sign-out, PostgreSQL persistence, and an evidence-producing verification workflow.
 
 ## Acceptance criteria
 
-### AC-001: Organisation-restricted authentication
+### AC-001: Dual-path authentication
 
-Given PostgreSQL is healthy and migrated, when an employee authenticates with Google, then Better Auth verifies the signed hosted-domain claim against the configured Workspace domain, creates the user and database-backed session, and navigates to `/dashboard`.
+Given PostgreSQL is healthy and migrated, when an employee authenticates with Google, then Better Auth verifies the signed hosted-domain claim against the configured Workspace domain. When an evaluator registers or signs in with valid credentials, Better Auth creates a database-backed session and navigates to `/dashboard`.
 
-Evidence: automated authorization-request inspection, sign-in screenshot, accessibility snapshot, migration verification, and manual employee callback acceptance.
+Evidence: automated Google authorization-request inspection, credential registration and sign-in videos, authenticated screenshots, accessibility snapshots, migration verification, and manual employee callback acceptance.
 
 ### AC-002: Protected access
 
@@ -42,7 +42,7 @@ Evidence: CI job conclusion, coverage artifact, browser evidence manifest.
 
 ## Non-goals
 
-- Password authentication, email verification, and password reset.
+- Email verification and password reset.
 - Multi-tenant authorization and role-based access control.
 - Pactum or contract-level BDD; this follows after the initial HTTP API surface is defined.
 - A hosted preview provider; CI and release hooks are provider-neutral until access is connected.
