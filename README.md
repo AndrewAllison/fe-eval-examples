@@ -8,11 +8,14 @@ A runnable reference for taking a frontend idea through specification, implement
 - pnpm 11
 - Docker
 - `mkcert` for locally trusted HTTPS certificates
+- A Google Cloud OAuth web client owned by the Google Workspace organisation
 
 ## Run locally
 
 ```bash
 pnpm install --frozen-lockfile
+# Export GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_WORKSPACE_DOMAIN
+# from your secret manager before running this command.
 pnpm env:setup
 docker compose up -d --wait database
 pnpm db:migrate
@@ -31,13 +34,15 @@ This runs formatting, type-aware linting, TypeScript, dependency guardrails, dea
 
 ## Capture browser evidence
 
-Start the application and provide a unique run identifier plus a test-only password:
+Start the application and provide a unique run identifier:
 
 ```bash
-EVIDENCE_RUN_ID=local-001 EVIDENCE_PASSWORD='test-only-password' pnpm evidence:capture
+EVIDENCE_RUN_ID=local-001 pnpm evidence:capture
 ```
 
-The ignored `evidence/runs/<run-id>` directory contains screenshots, accessibility snapshots, a video, browser diagnostics, and a checksum manifest.
+The ignored `evidence/runs/<run-id>` directory contains screenshots, accessibility snapshots, a sanitized Google authorization record, browser diagnostics, and a checksum manifest. Completing the employee-owned Google callback is a manual acceptance check and is never recorded by automation.
+
+Configure the Google OAuth client with `https://localhost:3000` as an authorized JavaScript origin and `https://localhost:3000/api/auth/callback/google` as an authorized redirect URI. Set the app audience to **Internal** in a Google Cloud project owned by the Workspace organisation.
 
 ## Database workflow
 

@@ -2,19 +2,23 @@ import type { Metadata } from "next";
 import React from "react";
 
 import { AuthShell } from "@/components/auth-shell";
-import { AuthForm } from "@/features/auth/auth-form";
+import { WorkspaceSignIn } from "@/features/auth/workspace-sign-in";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-export default function SignInPage() {
+interface SignInPageProps {
+  searchParams: Promise<{ error?: string }>;
+}
+
+export default async function SignInPage({ searchParams }: SignInPageProps) {
+  const { error } = await searchParams;
+
   return (
     <AuthShell
-      title="Welcome back"
-      description="Sign in to review the latest evaluation run and its release evidence."
-      alternateHref="/sign-up"
-      alternateLabel="Need a workspace? Create one"
+      title="Continue to the workspace"
+      description="Use your organisation Google account to review evaluation runs and release evidence."
     >
-      <AuthForm mode="sign-in" />
+      <WorkspaceSignIn oauthError={Boolean(error)} />
     </AuthShell>
   );
 }

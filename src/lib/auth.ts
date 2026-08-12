@@ -12,8 +12,18 @@ export const auth = betterAuth({
   baseURL: environment.BETTER_AUTH_URL,
   secret: environment.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, { provider: "pg", schema }),
-  emailAndPassword: {
-    enabled: true,
-    minPasswordLength: 12,
+  socialProviders: {
+    google: {
+      clientId: environment.GOOGLE_CLIENT_ID,
+      clientSecret: environment.GOOGLE_CLIENT_SECRET,
+      hd: environment.GOOGLE_WORKSPACE_DOMAIN,
+      prompt: "select_account",
+    },
+  },
+  account: {
+    encryptOAuthTokens: true,
+    accountLinking: {
+      enabled: false,
+    },
   },
 });

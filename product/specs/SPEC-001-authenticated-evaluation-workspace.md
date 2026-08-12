@@ -4,15 +4,15 @@ Source idea: `IDEA-001`
 
 ## Scope
 
-Deliver a responsive Next.js reference application with email/password registration, sign-in, a protected dashboard, sign-out, PostgreSQL persistence, and an evidence-producing verification workflow.
+Deliver a responsive Next.js reference application with organisation-restricted Google Workspace sign-in, a protected dashboard, sign-out, PostgreSQL persistence, and an evidence-producing verification workflow.
 
 ## Acceptance criteria
 
-### AC-001: Persistent registration
+### AC-001: Organisation-restricted authentication
 
-Given PostgreSQL is healthy and migrated, when a visitor submits valid registration details, then Better Auth creates the user and database-backed session and navigates to `/dashboard`.
+Given PostgreSQL is healthy and migrated, when an employee authenticates with Google, then Better Auth verifies the signed hosted-domain claim against the configured Workspace domain, creates the user and database-backed session, and navigates to `/dashboard`.
 
-Evidence: browser video, dashboard screenshot, accessibility snapshot, migration verification.
+Evidence: automated authorization-request inspection, sign-in screenshot, accessibility snapshot, migration verification, and manual employee callback acceptance.
 
 ### AC-002: Protected access
 
@@ -42,7 +42,7 @@ Evidence: CI job conclusion, coverage artifact, browser evidence manifest.
 
 ## Non-goals
 
-- Social authentication, email verification, and password reset.
+- Password authentication, email verification, and password reset.
 - Multi-tenant authorization and role-based access control.
 - Pactum or contract-level BDD; this follows after the initial HTTP API surface is defined.
 - A hosted preview provider; CI and release hooks are provider-neutral until access is connected.

@@ -1,21 +1,34 @@
+import nextEnvironment from "@next/env";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { z } from "zod";
+
+const authorizationSchema = z.object({
+  origin: z.literal("https://accounts.google.com"),
+  pathname: z.string().min(1),
+  hostedDomain: z.string(),
+  redirectUri: z.url(),
+  responseType: z.literal("code"),
+  scopes: z.array(z.string()).min(1),
+});
+
+const { loadEnvConfig } = nextEnvironment;
+loadEnvConfig(process.cwd());
 
 const runId = process.env.EVIDENCE_RUN_ID;
-const password = process.env.EVIDENCE_PASSWORD;
+const workspaceDomain = process.env.GOOGLE_WORKSPACE_DOMAIN;
 
 if (!runId || !/^[a-z0-9-]+$/.test(runId)) {
   throw new Error("EVIDENCE_RUN_ID must contain lowercase letters, numbers, or hyphens.");
 }
 
-if (!password || password.length < 12) {
-  throw new Error("EVIDENCE_PASSWORD must contain at least 12 characters.");
+if (!workspaceDomain) {
+  throw new Error("GOOGLE_WORKSPACE_DOMAIN must be present.");
 }
 
 const baseUrl = "https://localhost:3000";
-const email = `evidence+${runId}@example.test`;
 const runsDirectory = resolve("evidence", "runs");
 const outputDirectory = resolve(runsDirectory, runId);
 const session = `evidence-${runId}`;
@@ -57,15 +70,40 @@ browser("open", baseUrl);
 browser("screenshot", resolve(outputDirectory, "01-home.png"), "--full");
 await writeFile(resolve(outputDirectory, "01-home.snapshot.txt"), browser("snapshot", "-i"));
 
-browser("record", "start", resolve(outputDirectory, "auth-flow.webm"), `${baseUrl}/sign-up`);
-browser("find", "label", "Name", "fill", "Evidence Agent");
-browser("find", "label", "Work email", "fill", email);
-browser("find", "label", "Password", "fill", password);
-browser("find", "role", "button", "click", "--name", "Create workspace");
-browser("wait", "--url", "**/dashboard");
-browser("record", "stop");
-browser("screenshot", resolve(outputDirectory, "02-dashboard.png"), "--full");
-await writeFile(resolve(outputDirectory, "02-dashboard.snapshot.txt"), browser("snapshot", "-i"));
+browser("open", `${baseUrl}/sign-in`);
+browser("screenshot", resolve(outputDirectory, "02-sign-in.png"), "--full");
+await writeFile(resolve(outputDirectory, "02-sign-in.snapshot.txt"), browser("snapshot", "-i"));
+const serializedAuthorization = browser(
+  "eval",
+  `(async () => {
+    const response = await fetch("/api/auth/sign-in/social", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ provider: "google", callbackURL: "/dashboard" })
+    });
+    const payload = await response.json();
+    const url = new URL(payload.url);
+    return JSON.stringify({
+      origin: url.origin,
+      pathname: url.pathname,
+      hostedDomain: url.searchParams.get("hd"),
+      redirectUri: url.searchParams.get("redirect_uri"),
+      responseType: url.searchParams.get("response_type"),
+      scopes: url.searchParams.get("scope")?.split(" ").toSorted()
+    });
+  })()`,
+);
+const encodedAuthorization = z.string().parse(JSON.parse(serializedAuthorization) as unknown);
+const authorization = authorizationSchema.parse(JSON.parse(encodedAuthorization) as unknown);
+
+if (authorization.hostedDomain !== workspaceDomain) {
+  throw new Error("OAuth authorization did not contain the configured Workspace domain.");
+}
+
+await writeFile(
+  resolve(outputDirectory, "03-google-authorization.json"),
+  `${JSON.stringify(authorization, null, 2)}\n`,
+);
 const browserErrors = browser("errors");
 await writeFile(resolve(outputDirectory, "browser-errors.txt"), browserErrors);
 await writeFile(resolve(outputDirectory, "browser-console.txt"), browser("console"));
@@ -79,9 +117,9 @@ const artifactNames = [
   "00-protected-redirect.png",
   "01-home.png",
   "01-home.snapshot.txt",
-  "auth-flow.webm",
-  "02-dashboard.png",
-  "02-dashboard.snapshot.txt",
+  "02-sign-in.png",
+  "02-sign-in.snapshot.txt",
+  "03-google-authorization.json",
   "browser-errors.txt",
   "browser-console.txt",
 ];

@@ -66,9 +66,9 @@ export default function Home() {
                 buttonVariants({ size: "lg" }),
                 "h-11 bg-emerald-300 px-5 text-emerald-950 hover:bg-emerald-200",
               )}
-              href="/sign-up"
+              href="/sign-in"
             >
-              Start the reference flow
+              Continue with Workspace
               <ArrowRight aria-hidden="true" />
             </Link>
             <a

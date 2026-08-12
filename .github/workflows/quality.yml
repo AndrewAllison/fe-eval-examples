@@ -12,6 +12,9 @@ env:
   DATABASE_URL: postgresql://postgres:postgres@localhost:5432/aisdlc
   BETTER_AUTH_SECRET: ${{ github.sha }}
   BETTER_AUTH_URL: https://localhost:3000
+  GOOGLE_CLIENT_ID: 123456789-ci.apps.googleusercontent.com
+  GOOGLE_CLIENT_SECRET: ci-only-client-secret
+  GOOGLE_WORKSPACE_DOMAIN: example.test
   LOG_LEVEL: info
 
 jobs:
@@ -83,7 +86,6 @@ jobs:
       - run: pnpm evidence:capture
         env:
           EVIDENCE_RUN_ID: pr-${{ github.event.pull_request.number || github.run_number }}-${{ github.run_attempt }}
-          EVIDENCE_PASSWORD: ${{ github.sha }}
       - uses: actions/upload-artifact@v4
         with:
           name: browser-evidence

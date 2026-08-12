@@ -51,7 +51,7 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-5">
               {[
-                "Email and password registration persists to PostgreSQL",
+                "Google Workspace identity is restricted by the signed hosted-domain claim",
                 "Protected route validates the server-side session",
                 "Local development runs over HTTPS",
                 "Quality and browser evidence are captured as artifacts",
