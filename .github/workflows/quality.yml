@@ -77,12 +77,19 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec agent-browser install --with-deps
       - run: pnpm db:migrate
-      - run: pnpm dev > /tmp/frontend-aisdlc-next.log 2>&1 &
-      - run: curl --fail --insecure --retry 30 --retry-delay 2 https://localhost:3000/api/health
-      - run: pnpm evidence:capture
+      - name: Capture browser evidence
+        run: |
+          pnpm dev > /tmp/frontend-aisdlc-next.log 2>&1 &
+          app_pid=$!
+          trap 'kill "$app_pid"' EXIT
+          curl --fail --insecure --retry 30 --retry-connrefused --retry-delay 2 https://localhost:3000/api/health
+          pnpm evidence:capture
         env:
           EVIDENCE_RUN_ID: pr-${{ github.event.pull_request.number || github.run_number }}-${{ github.run_attempt }}
           EVIDENCE_PASSWORD: ${{ github.sha }}
+      - name: Report server diagnostics
+        if: failure()
+        run: tail -200 /tmp/frontend-aisdlc-next.log
       - uses: actions/upload-artifact@v6
         with:
           name: browser-evidence
