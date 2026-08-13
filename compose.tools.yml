@@ -1,0 +1,16 @@
+name: frontend-aisdlc-tools
+
+services:
+  actionlint:
+    image: rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+    working_dir: /repo
+    volumes:
+      - .:/repo:ro
+    command: [-color]
+
+  zizmor:
+    image: ghcr.io/zizmorcore/zizmor:1.29.0@sha256:863026d54f91271b10b60b67ad8054cb37120167e162482597db102b3026a284
+    working_dir: /repo
+    volumes:
+      - .:/repo:ro
+    command: [--pedantic, .]
