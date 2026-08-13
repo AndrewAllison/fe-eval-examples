@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "ai-sdlc:audit": "frontend-sdlc-audit --repo . --out .artifacts/ai-sdlc-audit",
-    "ai-sdlc:audit:strict": "frontend-sdlc-audit --repo . --out .artifacts/ai-sdlc-audit --fail-on red",
+    "ai-sdlc:audit:strict": "frontend-sdlc-audit --repo . --out .artifacts/ai-sdlc-audit --fail-on amber",
     "build": "next build",
     "db:check": "drizzle-kit check",
     "db:down": "POSTGRES_PORT=5432 docker compose down",
@@ -28,7 +28,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "next typegen && tsc --noEmit",
-    "verify": "pnpm ai-sdlc:audit && pnpm workflow:lint && pnpm security && pnpm format:check && pnpm lint && pnpm typecheck && pnpm guardrails && pnpm static && pnpm test && pnpm db:check && pnpm build",
+    "verify": "pnpm ai-sdlc:audit:strict && pnpm workflow:lint && pnpm security && pnpm format:check && pnpm lint && pnpm typecheck && pnpm guardrails && pnpm static && pnpm test && pnpm db:check && pnpm build",
     "workflow:lint": "docker compose -f compose.tools.yml run --rm actionlint && docker compose -f compose.tools.yml run --rm zizmor",
     "worktree:create": "node scripts/create-worktree.ts",
     "worktree:dev": "node scripts/worktree-runtime.ts dev",
