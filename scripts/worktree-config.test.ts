@@ -24,19 +24,23 @@ describe("worktree configuration", () => {
   it.each(["Auth", "-auth", "auth-", "auth_eval", "a".repeat(41)])(
     "rejects invalid name %s",
     (name) => {
-      expect(() => assertWorktreeName(name)).toThrow();
+      expect(() => assertWorktreeName(name)).toThrow(/Worktree name must be/);
     },
   );
 
   it("rejects an incomplete descriptor", () => {
-    expect(() => parseWorktreeConfig({ name: "auth-eval" })).toThrow();
+    expect(() => parseWorktreeConfig({ name: "auth-eval" })).toThrow(
+      ".worktree.json does not contain a valid worktree configuration.",
+    );
   });
 
   it("rejects a descriptor moved to another directory", () => {
     const root = resolve("/workspace/fe-eval-examples");
     const config = createWorktreeConfig(root, "auth-eval");
 
-    expect(() => parseRuntimeWorktreeConfig(root, config)).toThrow();
+    expect(() => parseRuntimeWorktreeConfig(root, config)).toThrow(
+      "Worktree configuration does not belong to this directory.",
+    );
   });
 
   it("accepts the descriptor in its generated directory", () => {

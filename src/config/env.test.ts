@@ -26,12 +26,12 @@ describe("server environment", () => {
   it("rejects a missing Google client secret", () => {
     const { GOOGLE_CLIENT_SECRET: _, ...environment } = validEnvironment;
 
-    expect(() => readServerEnvironment(environment)).toThrow();
+    expect(() => readServerEnvironment(environment)).toThrow(/GOOGLE_CLIENT_SECRET/);
   });
 
   it("rejects an invalid Workspace domain", () => {
     expect(() =>
       readServerEnvironment({ ...validEnvironment, GOOGLE_WORKSPACE_DOMAIN: "not-a-domain" }),
-    ).toThrow();
+    ).toThrow(/GOOGLE_WORKSPACE_DOMAIN/);
   });
 });

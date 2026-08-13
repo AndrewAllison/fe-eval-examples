@@ -17,15 +17,22 @@ export function WorkspaceSignIn({ oauthError }: WorkspaceSignInProps) {
     setError(false);
     setPending(true);
 
-    void authClient.signIn
-      .social({
-        provider: "google",
-        callbackURL: "/dashboard",
-        errorCallbackURL: "/sign-in?error=workspace-auth",
-      })
-      .then((result) => setError(Boolean(result.error)))
-      .catch(() => setError(true))
-      .finally(() => setPending(false));
+    const completeSignIn = async () => {
+      try {
+        const result = await authClient.signIn.social({
+          provider: "google",
+          callbackURL: "/dashboard",
+          errorCallbackURL: "/sign-in?error=workspace-auth",
+        });
+        setError(Boolean(result.error));
+      } catch {
+        setError(true);
+      } finally {
+        setPending(false);
+      }
+    };
+
+    void completeSignIn();
   }, []);
 
   return (

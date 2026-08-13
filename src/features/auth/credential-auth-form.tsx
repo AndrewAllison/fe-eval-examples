@@ -15,29 +15,39 @@ interface CredentialAuthFormProps {
   mode: AuthMode;
 }
 
-async function authenticate(form: HTMLFormElement, mode: AuthMode): Promise<string | null> {
+type Authentication = (form: HTMLFormElement) => Promise<string | null>;
+
+async function signUp(form: HTMLFormElement): Promise<string | null> {
   const data = new FormData(form);
-  const common = {
+  const result = signUpSchema.safeParse({
+    email: data.get("email"),
+    name: data.get("name"),
+    password: data.get("password"),
+  });
+  if (!result.success) {
+    return result.error.issues[0]?.message ?? "Registration details are invalid.";
+  }
+  const response = await authClient.signUp.email(result.data);
+  return response.error?.message ?? null;
+}
+
+async function signIn(form: HTMLFormElement): Promise<string | null> {
+  const data = new FormData(form);
+  const result = signInSchema.safeParse({
     email: data.get("email"),
     password: data.get("password"),
-  };
-
-  if (mode === "sign-up") {
-    const result = signUpSchema.safeParse({ ...common, name: data.get("name") });
-    if (!result.success) {
-      return result.error.issues[0]?.message ?? "Registration details are invalid.";
-    }
-    const response = await authClient.signUp.email(result.data);
-    return response.error?.message ?? null;
-  }
-
-  const result = signInSchema.safeParse(common);
+  });
   if (!result.success) {
     return result.error.issues[0]?.message ?? "Sign-in details are invalid.";
   }
   const response = await authClient.signIn.email(result.data);
   return response.error?.message ?? null;
 }
+
+const authenticationByMode: Record<AuthMode, Authentication> = {
+  "sign-in": signIn,
+  "sign-up": signUp,
+};
 
 export function CredentialAuthForm({ mode }: CredentialAuthFormProps) {
   const router = useRouter();
@@ -52,17 +62,23 @@ export function CredentialAuthForm({ mode }: CredentialAuthFormProps) {
       setPending(true);
       const form = event.currentTarget;
 
-      void authenticate(form, mode)
-        .then((authenticationError) => {
+      const completeAuthentication = async () => {
+        try {
+          const authenticationError = await authenticationByMode[mode](form);
           if (authenticationError) {
             setError(authenticationError);
             return;
           }
           router.push("/dashboard");
           router.refresh();
-        })
-        .catch(() => setError("Authentication failed. Try again."))
-        .finally(() => setPending(false));
+        } catch {
+          setError("Authentication failed. Try again.");
+        } finally {
+          setPending(false);
+        }
+      };
+
+      void completeAuthentication();
     },
     [mode, router],
   );

@@ -20,7 +20,7 @@
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "guardrails": "depcruise src --config dependency-cruiser.config.mjs",
-    "lint": "oxlint --type-aware --type-check --deny-warnings",
+    "lint": "oxlint --type-aware --type-check --deny-warnings --report-unused-disable-directives",
     "security": "pnpm security:dependencies && pnpm security:secrets",
     "security:dependencies": "pnpm audit --audit-level moderate",
     "security:secrets": "docker compose -f compose.tools.yml run --rm gitleaks git --no-banner --no-color --redact /repo && docker compose -f compose.tools.yml run --rm gitleaks dir --no-banner --no-color --redact /repo",

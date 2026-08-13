@@ -13,10 +13,18 @@ export function SignOutButton() {
 
   const signOut = useCallback(() => {
     setPending(true);
-    void authClient.signOut().then(() => {
-      router.push("/");
-      router.refresh();
-    });
+
+    const completeSignOut = async () => {
+      try {
+        await authClient.signOut();
+        router.push("/");
+        router.refresh();
+      } catch {
+        setPending(false);
+      }
+    };
+
+    void completeSignOut();
   }, [router]);
 
   return (
