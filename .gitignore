@@ -35,6 +35,7 @@ yarn-error.log*
 !.env.example
 
 # local TLS and generated evidence
+/.artifacts/
 /certificates/
 /evidence/runs/
 /.worktree.json

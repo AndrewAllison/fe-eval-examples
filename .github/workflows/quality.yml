@@ -44,6 +44,14 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:migrate
       - run: pnpm verify
+      - name: Upload AI SDLC audit
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ai-sdlc-audit
+          path: .artifacts/ai-sdlc-audit
+          if-no-files-found: error
+          retention-days: 30
       - uses: actions/upload-artifact@v6
         with:
           name: unit-coverage

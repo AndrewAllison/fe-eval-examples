@@ -30,7 +30,17 @@ Open [https://localhost:3000](https://localhost:3000). Next.js creates a local c
 pnpm verify
 ```
 
-This runs formatting, type-aware linting, TypeScript, dependency guardrails, dead-code analysis, unit tests with coverage, migration validation, and a production build.
+This runs the AI SDLC RAG audit, formatting, type-aware linting, TypeScript, dependency guardrails, dead-code analysis, unit tests with coverage, migration validation, and a production build.
+
+## Generate the AI SDLC audit
+
+Run the commit-pinned [frontend SDLC audit](https://github.com/AndrewAllison/frontend-sdlc-audit):
+
+```bash
+pnpm ai-sdlc:audit
+```
+
+Open `.artifacts/ai-sdlc-audit/ai-sdlc-audit.html` for the RAG report or consume `ai-sdlc-audit.json` in automation. Pull requests upload both files as a retained workflow artifact. The baseline audit publishes evidence without blocking merges; `pnpm ai-sdlc:audit:strict` is available once the reported red controls have been resolved.
 
 ## Capture browser evidence
 

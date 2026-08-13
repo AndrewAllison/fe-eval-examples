@@ -87,6 +87,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.10
         version: 0.31.10
+      frontend-sdlc-audit:
+        specifier: github:AndrewAllison/frontend-sdlc-audit#45722f3001c1f8ed9c7893cccae994cb36e09f77
+        version: https://codeload.github.com/AndrewAllison/frontend-sdlc-audit/tar.gz/45722f3001c1f8ed9c7893cccae994cb36e09f77
       jsdom:
         specifier: ^30.0.1
         version: 30.0.1(@noble/hashes@2.3.0)
@@ -2204,6 +2207,12 @@ packages:
   formatly@0.3.0:
     resolution: {integrity: sha512-9XNj/o4wrRFyhSMJOvsuyMwy8aUfBaZ1VrqHVfohyXf0Sw0e+yfKG+xZaY3arGCOMdwFsqObtzVOc1gU9KiT9w==}
     engines: {node: '>=18.3.0'}
+    hasBin: true
+
+  frontend-sdlc-audit@https://codeload.github.com/AndrewAllison/frontend-sdlc-audit/tar.gz/45722f3001c1f8ed9c7893cccae994cb36e09f77:
+    resolution: {gitHosted: true, integrity: sha512-rLhJoaP4Gqli6++Rierni/PPviFGNJdQV6Smxy05jVhdLQRnYQigW4E0AwUxL42oU6xH55+0h7j7riu3+3kzzQ==, tarball: https://codeload.github.com/AndrewAllison/frontend-sdlc-audit/tar.gz/45722f3001c1f8ed9c7893cccae994cb36e09f77}
+    version: 1.0.0
+    engines: {node: '>=20 <27'}
     hasBin: true
 
   fsevents@2.3.3:
@@ -4435,6 +4444,8 @@ snapshots:
   formatly@0.3.0:
     dependencies:
       fd-package-json: 2.0.0
+
+  frontend-sdlc-audit@https://codeload.github.com/AndrewAllison/frontend-sdlc-audit/tar.gz/45722f3001c1f8ed9c7893cccae994cb36e09f77: {}
 
   fsevents@2.3.3:
     optional: true
