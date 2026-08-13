@@ -1,0 +1,17 @@
+title = "Frontend AI SDLC secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated and local-only paths outside the reviewable source set"
+paths = [
+  '''(^|/)\.artifacts/''',
+  '''(^|/)\.git/''',
+  '''(^|/)\.next/''',
+  '''(^|/)certificates/''',
+  '''(^|/)coverage/''',
+  '''(^|/)evidence/runs/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)\.env\.local$''',
+]
